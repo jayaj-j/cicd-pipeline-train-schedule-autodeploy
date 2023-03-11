@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    app = docker.build(DOCKER_IMAGE_NAME)
+                    app = sudo docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
                         sh 'echo Train_schedule_app'
                     }
