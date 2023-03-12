@@ -32,36 +32,15 @@ pipeline {
                 }
             }
         }
-        stage('CanaryDeploy') {
-            environment { 
-                CANARY_REPLICAS = 1
-            }
+        stage('Deploy_to_k8s') {
             steps {
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
+                sshagent(['k8s']) {
+                        sh 'scp -r -o StrictHostKeyChecking=no deploy_train_schedule.yml root@172.31.0.242:/tmp'
+                        sh 'ssh root@172.31.0.242 kubectl apply -f /tmp/deploy_train_schedule.yml'
+                        }
+                }
             }
         }
-        stage('DeployToProduction') {
-            environment { 
-                CANARY_REPLICAS = 0
-            }
-            steps {
-                input 'Deploy to Production?'
-                milestone(1)
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube.yml',
-                    enableConfigSubstitution: true
-                )
-            }
-        }
+
     }
 }
