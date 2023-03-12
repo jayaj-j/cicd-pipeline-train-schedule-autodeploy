@@ -38,9 +38,7 @@ pipeline {
                         sh 'scp -r -o StrictHostKeyChecking=no deploy_train_schedule.yml root@172.31.0.242:/tmp'
                         sh 'ssh root@172.31.0.242 kubectl apply -f /tmp/deploy_train_schedule.yml'
                        }
-			}
-            
+		}
         }
-
     }
 }
