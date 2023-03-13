@@ -17,7 +17,7 @@ pipeline {
                 script {
                     app = docker.build(DOCKER_IMAGE_NAME)
                     app.inside {
-                        sh 'echo Train_schedule_app'
+                        sh 'echo Train_schedule_appLication'
                     }
                 }
             }
