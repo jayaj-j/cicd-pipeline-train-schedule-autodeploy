@@ -34,10 +34,15 @@ pipeline {
         }
         stage('Deploy_to_k8s') {
             steps {
-				sshagent(['k8s']) {
+		sshagent(['k8s']) {
                         sh 'scp -r -o StrictHostKeyChecking=no deploy_train_schedule.yml root@172.31.0.242:/tmp'
-                        sh 'ssh root@172.31.0.242 kubectl apply -f /tmp/deploy_train_schedule.yml'
-                       }
+			script{
+				try{
+				sh 'ssh root@172.31.0.242 kubectl apply -f /tmp/deploy_train_schedule.yml'
+				}catch(error){
+                        	sh 'ssh root@172.31.0.242 kubectl create -f /tmp/deploy_train_schedule.yml'
+                       		}
+			}
 		}
         }
     }
